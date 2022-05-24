@@ -1,21 +1,38 @@
-<script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + Vite" />
+  <pre>{{data}}</pre>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<script type="module">
+import { Octokit, App } from "https://cdn.skypack.dev/octokit"
+
+export default {
+  async mounted(){
+    try{ 
+      const octokit = new Octokit({
+      auth: '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'
+      })
+
+      let response = await octokit.request('GET /repos/{owner}/{repo}/commits', {
+        owner: 'srod5125',
+        repo: 'roads_sub'
+      })
+      var stringedRes = JSON.stringify(response)
+
+      console.log(stringedRes)
+      this.data = stringedRes
+
+    }
+    catch(error){ 
+      console.log(error)
+    }
+  },
+  data(){
+    return{ 
+      data:""
+    }
+  }
 }
+</script>
+
+<style>
 </style>
