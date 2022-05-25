@@ -1,5 +1,16 @@
 <template>
-  <pre>{{data}}</pre>
+  <div>
+    <div v-if="recievedData">
+      <li v-for="(v, index) in recievedData">
+        {{recievedData[index].commit}} 
+        {{recievedData[index].author}}
+        {{recievedData[index].committer}}
+      </li>
+    </div>
+    <div v-else>
+      <p>Loading...</p>
+    </div>
+  </div>
 </template>
 
 <script type="module">
@@ -9,18 +20,18 @@ export default {
   async mounted(){
     try{ 
       const octokit = new Octokit({
-      auth: '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'
+        auth: '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'
       })
 
-      let response = await octokit.request('GET /repos/{owner}/{repo}/commits', {
+      var response = await octokit.request('GET /repos/{owner}/{repo}/commits', {
         owner: 'srod5125',
         repo: 'roads_sub'
       })
-      var stringedRes = JSON.stringify(response)
+      //var stringedRes = JSON.stringify(response.data[0])
 
-      console.log(stringedRes)
-      this.data = stringedRes
-
+      this.recievedData = response.data
+      console.log(Object.keys(response.data[0]))
+      
     }
     catch(error){ 
       console.log(error)
@@ -28,7 +39,7 @@ export default {
   },
   data(){
     return{ 
-      data:""
+      recievedData:null
     }
   }
 }
