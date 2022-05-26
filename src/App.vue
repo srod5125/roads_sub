@@ -1,11 +1,12 @@
 <template>
   <div>
     <div v-if="recievedData">
-      <li v-for="(v, index) in recievedData">
-        {{recievedData[index].commit}} 
-        {{recievedData[index].author}}
-        {{recievedData[index].committer}}
-      </li>
+      <ul v-for="entry in recievedData">
+        <li>{{entry.commit.author.name}} <br> {{entry.commit.author.date}} <br>
+         {{entry.commit.message}}</li>
+        <br>
+    
+      </ul>
     </div>
     <div v-else>
       <p>Loading...</p>
@@ -17,17 +18,14 @@
 import { processExpression } from "@vue/compiler-core";
 import { Octokit, App } from "https://cdn.skypack.dev/octokit"
 
+//yay it works
 
 export default {
   async mounted(){
     try{ 
-      //let reader = new FileReader();
-      //reader.readAsText('src/assets/myPAT.txt')
-      //let txt = (await fetch('myPAT.txt')).text()
-      //let txt = reader.result;
-      //console.log(txt)
 
       const octokit = new Octokit({
+        //make backend request
         auth: import.meta.env.MYPAT
       })
       
@@ -35,10 +33,15 @@ export default {
         owner: 'srod5125',
         repo: 'roads_sub'
       })
-      //var stringedRes = JSON.stringify(response.data[0])
 
       this.recievedData = response.data
-      console.log(Object.keys(response.data[0]))
+      console.log("response all")
+      console.log(response)
+      console.log("response data")
+      console.log(response.data)
+      console.log("data length")
+      console.log(this.recievedData.length)
+
       
     }
     catch(error){ 
