@@ -1,6 +1,15 @@
 <template>
   <div>
-    <div v-if="recievedData">
+    <button @click="GetCommits">Load Data</button>
+
+    <div v-if=" state=='USERLANDED' ">
+      <p>{{message}}</p>
+    </div>
+    <div v-else-if=" state=='GOTDATA' && recievedData ">
+      <div>
+        <p>{{message}}</p> 
+      </div>
+      <br>
       <ul v-for="entry in recievedData">
         <li>{{entry.commit.author.name}} <br> {{entry.commit.author.date}} <br>
          {{entry.commit.message}}</li>
@@ -8,9 +17,7 @@
     
       </ul>
     </div>
-    <div v-else>
-      <p>Loading...</p>
-    </div>
+
   </div>
 </template>
 
@@ -22,35 +29,48 @@ import { Octokit, App } from "https://cdn.skypack.dev/octokit"
 
 export default {
   async mounted(){
-    try{ 
+    
+  },
+  methods:{ 
+    async GetCommits () { 
+      try{ 
 
-      const octokit = new Octokit({
-        //make backend request
-        auth: import.meta.env.MYPAT
-      })
-      
-      var response = await octokit.request('GET /repos/{owner}/{repo}/commits', {
-        owner: 'srod5125',
-        repo: 'roads_sub'
-      })
+        this.message = "Loading..."
 
-      this.recievedData = response.data
-      console.log("response all")
-      console.log(response)
-      console.log("response data")
-      console.log(response.data)
-      console.log("data length")
-      console.log(this.recievedData.length)
+        const octokit = new Octokit({
+          //make backend request
+          auth: import.meta.env.MYPAT
+        })
+        
+        var response = await octokit.request('GET /repos/{owner}/{repo}/commits', {
+          owner: 'srod5125',
+          repo: 'roads_sub'
+        })
 
-      
-    }
-    catch(error){ 
-      console.log(error)
+        this.recievedData = response.data
+
+        //console.log("response all")
+        //console.log(response)
+        //console.log("response data")
+        //console.log(response.data)
+        //console.log("data length")
+        //console.log(this.recievedData.length)
+
+        this.state = 'GOTDATA'
+        this.message = "Got commits"
+
+      }
+      catch(error){ 
+        console.log(error)
+        this.message = "An error occurred"
+      }
     }
   },
   data(){
     return{ 
-      recievedData:null
+      recievedData:null,
+      state:'USERLANDED',
+      message:"Nothing yet"
     }
   }
 }
